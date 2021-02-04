@@ -1,0 +1,17 @@
+
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"lib": ["dom"],
+		"jsx": "react",
+		"outDir": "./build/",
+		"rootDir": "src"
+	},
+	"exclude": [
+		"node_modules"
+	],
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx"
+	]
+}
