@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
-import users from './users';
+import spellsearch from './spellsearch';
 
 const router = Router();
 
-router.use('/users', users);
+router.use('/spellsearch', spellsearch);
 
 router.get('/', (req: Request, res: Response): void => {
 	res.send('You have reached the API');

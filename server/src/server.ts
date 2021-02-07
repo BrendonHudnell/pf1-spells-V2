@@ -1,13 +1,22 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import routes from './routes';
 import path from 'path';
+import * as dotenv from 'dotenv';
+import routes from './routes';
+
+dotenv.config();
+
+export const env = {
+	dbHost: process.env.DB_HOST ?? '',
+	dbUser: process.env.DB_USER ?? '',
+	dbPassword: process.env.DB_PASS ?? '',
+	dbDatabase: process.env.DB_DBASE ?? '',
+	dbPort: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 0,
+};
 
 const app = express();
 
 app.use(cors());
-
-console.log(__dirname);
 
 app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')));
 
@@ -21,5 +30,3 @@ app.get('*', (req: Request, res: Response): void => {
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server listening on port ${port}`));
-
-export default app;
