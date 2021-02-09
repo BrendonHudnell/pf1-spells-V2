@@ -1,57 +1,56 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
+import { createMuiTheme, ThemeProvider, CssBaseline } from '@material-ui/core';
 import { Main } from './main';
 
-import './App.scss';
+export function App() {
+	const [darkMode, setDarkMode] = useState(
+		localStorage.getItem('theme') === 'dark'
+	);
 
-const changeTheme = () => {
-	if (document.documentElement.hasAttribute('theme')) {
-		document.documentElement.removeAttribute('theme');
-		localStorage.removeItem('theme');
-	} else {
-		document.documentElement.setAttribute('theme', 'dark');
-		localStorage.setItem('theme', 'dark');
-	}
-};
+	const theme = useMemo(
+		() =>
+			createMuiTheme({
+				palette: {
+					type: darkMode ? 'dark' : 'light',
+				},
+				typography: {
+					button: {
+						textTransform: 'none',
+					},
+					h1: {
+						fontSize: '2rem',
+						fontWeight: 'bold',
+					},
+					h2: {
+						fontSize: '1.8rem',
+						fontWeight: 'bold',
+					},
+					h3: {
+						fontSize: '1.5rem',
+						fontWeight: 'bold',
+					},
+					h4: {
+						fontSize: '1.25rem',
+						fontWeight: 'bold',
+					},
+				},
+			}),
+		[darkMode]
+	);
 
-function App() {
-	if (localStorage.getItem('theme') === 'dark') {
-		document.documentElement.setAttribute('theme', 'dark');
+	function changeTheme(darkMode: boolean) {
+		if (darkMode) {
+			localStorage.setItem('theme', 'dark');
+		} else {
+			localStorage.removeItem('theme');
+		}
+		setDarkMode(darkMode);
 	}
 
 	return (
-		<div className="App">
-			<div className="content">
-				<header>
-					<h1>Pathfinder 1E Spell Search</h1>
-					<input
-						type="checkbox"
-						id="themeSwitch"
-						className="themeSwitchInput"
-						onClick={changeTheme}
-					/>
-					<label htmlFor="themeSwitch" className="themeSwitchLabel tooltip">
-						<span />
-					</label>
-					<span className="tooltipText">Toggle theme</span>
-				</header>
-				<br />
-				<Main />
-			</div>
-			<footer>
-				<h6>
-					Database sourced from{' '}
-					<a
-						href="http://home.pathfindercommunity.net/home/databases/spells"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						pathfindercommunity.net
-					</a>
-					. Designed by Brendon Hudnell. 2020
-				</h6>
-			</footer>
-		</div>
+		<ThemeProvider theme={theme}>
+			<CssBaseline />
+			<Main darkMode={darkMode} changeTheme={changeTheme} />
+		</ThemeProvider>
 	);
 }
-
-export default App;

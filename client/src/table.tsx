@@ -1,75 +1,139 @@
-import React from 'react';
+import React, { Fragment, ReactElement, useEffect, useState } from 'react';
+import parse from 'html-react-parser';
+import {
+	Box,
+	Collapse,
+	IconButton,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	Typography,
+} from '@material-ui/core';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import { tableList } from './parameterTypes';
 
-const tableHeaders = [
-	{ value: 'spell_name', display: 'Spell Name' },
-	{ value: 'spell_level', display: 'Spell Level' },
-	{ value: 'short_description', display: 'Spell Description' },
-	{ value: 'saving_throw', display: 'Saving Throw' },
-	{ value: 'spell_resistance', display: 'Spell Resistance' },
-];
+// TODO:
+// - add pagination
+// - add sorting
 
 export interface TableProps {
-	data: Record<string, string>[];
-	isSorted: Record<string, boolean>;
-	sortDirection: Record<string, boolean>;
-	isExpanded: boolean[];
-	onSort: (key: string) => void;
-	onExpand: (index: number) => void;
+	rowData: Record<string, string>[];
 }
 
-export function Table(props: TableProps) {
-	function createHeaders() {
-		return tableHeaders.map((header) => {
-			return (
-				<th
-					key={header.display}
-					className={
-						props.isSorted[header.value]
-							? props.sortDirection[header.value]
-								? 'bordered ascendingSort'
-								: 'bordered descendingSort'
-							: 'bordered'
-					}
-					onClick={() => props.onSort(header.value)}
-				>
-					{header.display}
-				</th>
-			);
-		});
-	}
+// function handleSort(sortKey: string) {
+// 	const tempData = data;
+// 	const tempIsSorted = isSorted;
+// 	const tempSortDirection = sortDirection;
 
-	function createRows() {
-		return props.data.map((row, index) => {
-			const description = new DOMParser().parseFromString(
-				row.description_formatted,
-				'text/html'
-			).body.innerHTML;
-			console.log(description);
-			return (
-				<React.Fragment key={row.spell_name}>
-					<tr className="bordered" onClick={() => props.onExpand(index)}>
-						<td className="bordered">{row.spell_name}</td>
-						<td className="bordered">{row.spell_level}</td>
-						<td className="bordered">{row.short_description}</td>
-						<td className="bordered">{row.saving_throw}</td>
-						<td className="bordered">{row.spell_resistance}</td>
-					</tr>
-					<tr className={props.isExpanded[index] ? '' : 'hidden'}>
-						<td className="expand" colSpan={tableHeaders.length}>
-							{description}
-						</td>
-					</tr>
-				</React.Fragment>
-			);
-		});
-	}
+// 	// mark the sortKey column as sorted, the rest as not
+// 	Object.keys(tempIsSorted).forEach((key) => {
+// 		if (key === sortKey) {
+// 			tempIsSorted[key] = true;
+// 		} else {
+// 			tempIsSorted[key] = false;
+// 		}
+// 	});
+
+// 	tempData.sort((a, b) => {
+// 		// equal items sort equally
+// 		if (a[sortKey] === b[sortKey]) {
+// 			return 0;
+// 		}
+// 		// nulls sort after anything else
+// 		else if (a[sortKey] === null) {
+// 			return 1;
+// 		} else if (b[sortKey] === null) {
+// 			return -1;
+// 		}
+// 		// otherwise, if we're ascending, lowest sorts first
+// 		else if (tempSortDirection[sortKey]) {
+// 			return a[sortKey] < b[sortKey] ? -1 : 1;
+// 		}
+// 		// if descending, highest sorts first
+// 		else {
+// 			return a[sortKey] < b[sortKey] ? 1 : -1;
+// 		}
+// 	});
+
+// 	// change the sortDirection
+// 	const sortKeyDirection = tempSortDirection[sortKey];
+// 	Object.keys(tempSortDirection).forEach((key) => {
+// 		if (key === sortKey) {
+// 			tempSortDirection[key] = !sortKeyDirection;
+// 		} else {
+// 			tempSortDirection[key] = true;
+// 		}
+// 	});
+
+// 	setData(tempData);
+// 	setIsSorted(tempIsSorted);
+// 	setSortDirection(tempSortDirection);
+// }
+
+export function CollapsibleTable(props: TableProps) {
+	const { rowData } = props;
+	const [isSearch, setIsSearch] = useState(false);
+
+	useEffect(() => {
+		setIsSearch(true);
+	}, [props.rowData]);
 
 	return (
-		<table className="bordered">
-			<tbody>
-				<tr>{createHeaders()}</tr>
-				{createRows()}
-			</tbody>
-		</table>
+		<TableContainer component={Paper}>
+			<Typography variant="h4" gutterBottom>
+				{isSearch ? `${rowData.length} results found.` : ''}
+			</Typography>
+			<Table stickyHeader>
+				<TableHead>
+					<TableRow>
+						<TableCell />
+						{tableList.map((header) => (
+							<TableCell key={header.value}>{header.header}</TableCell>
+						))}
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{rowData.map((row) => (
+						<Row key={row.spell_name} row={row} />
+					))}
+				</TableBody>
+			</Table>
+		</TableContainer>
+	);
+}
+
+export interface RowProps {
+	row: Record<string, string>;
+}
+
+export function Row(props: RowProps): ReactElement {
+	const { row } = props;
+	const [isOpen, setIsOpen] = useState(false);
+
+	return (
+		<Fragment>
+			<TableRow>
+				<TableCell>
+					<IconButton size="small" onClick={() => setIsOpen(!isOpen)}>
+						{isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+					</IconButton>
+				</TableCell>
+				{tableList.map((value) => (
+					<TableCell key={value.value}>{row[value.value]}</TableCell>
+				))}
+			</TableRow>
+			<TableRow>
+				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+					<Collapse in={isOpen} timeout="auto" unmountOnExit>
+						<Box margin={1}>{parse(row.description_formatted)}</Box>
+					</Collapse>
+				</TableCell>
+			</TableRow>
+		</Fragment>
 	);
 }

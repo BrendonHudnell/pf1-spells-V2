@@ -1,100 +1,69 @@
-import React, {
-	ChangeEvent,
-	ChangeEventHandler,
-	ReactElement,
-	useState,
-} from 'react';
+import React, { Fragment, ReactElement, useState } from 'react';
+import {
+	Button,
+	Collapse,
+	FormControlLabel,
+	Grid,
+	makeStyles,
+	Radio,
+	RadioGroup,
+	Typography,
+} from '@material-ui/core';
+import PlusIcon from '@material-ui/icons/Add';
+import MinusIcon from '@material-ui/icons/Remove';
+import { GridCheckbox } from './gridCheckbox';
+import { savesList, spellResistanceList } from './parameterTypes';
 
-const saves = [
-	{ value: 'fortitude', display: 'Fortitude' },
-	{ value: 'reflex', display: 'Reflex' },
-	{ value: 'will', display: 'Will' },
-	{ value: 'none', display: 'None' },
-];
-
-const spellResistance = [
-	{ value: 'true', display: 'Yes' },
-	{ value: 'false', display: 'No' },
-	{ value: 'either', display: 'Either' },
-];
+const useStyles = makeStyles({
+	root: {
+		flexGrow: 1,
+	},
+});
 
 export interface AdvancedParametersProps {
-	onCheckboxChange: ChangeEventHandler<HTMLInputElement>;
-	onRadioChange: ChangeEventHandler<HTMLInputElement>;
+	inputRef: (instance: HTMLInputElement | null) => void;
 }
 
 export function AdvancedParameters(
 	props: AdvancedParametersProps
 ): ReactElement {
-	const [isOpened, setIsOpened] = useState(false);
-	const [selectedOption, setSelectedOption] = useState('either');
+	const [isOpen, setIsOpen] = useState(false);
 
-	function createCheckboxRow(checkboxArray: Record<string, string>[]) {
-		return checkboxArray.map((element) => {
-			return (
-				<td key={element.display}>
-					<label>
-						<input
-							type="checkbox"
-							value={element.value}
-							onChange={props.onCheckboxChange}
-						/>
-						{element.display}
-					</label>
-				</td>
-			);
-		});
-	}
-
-	function createRadioButtonRow(radioArray: Record<string, string>[]) {
-		return radioArray.map((element) => {
-			return (
-				<td key={element.display}>
-					<label>
-						<input
-							type="radio"
-							value={element.value}
-							checked={selectedOption === element.value}
-							onChange={handleChecked}
-						/>
-						{element.display}
-					</label>
-				</td>
-			);
-		});
-	}
-
-	function handleChecked(event: ChangeEvent<HTMLInputElement>) {
-		setSelectedOption(event.target.value);
-		props.onRadioChange(event);
-	}
-
-	function handleClicked() {
-		setIsOpened(!isOpened);
-	}
+	const classes = useStyles();
 
 	return (
-		<div>
-			<button
-				className={isOpened ? 'collapsible active' : 'collapsible'}
-				onClick={handleClicked}
+		<Fragment>
+			<Button
+				onClick={() => setIsOpen(!isOpen)}
+				startIcon={isOpen ? <MinusIcon /> : <PlusIcon />}
 			>
 				&nbsp;&nbsp;Advanced Parameters
-			</button>
-			<div className={isOpened ? '' : 'hidden'}>
-				<h4>Spell Resistance:</h4>
-				<table>
-					<tbody>
-						<tr>{createRadioButtonRow(spellResistance)}</tr>
-					</tbody>
-				</table>
-				<h4>Saves:</h4>
-				<table>
-					<tbody>
-						<tr>{createCheckboxRow(saves)}</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+			</Button>
+			<Collapse in={isOpen} timeout="auto">
+				<Typography variant="h4">Spell Resistance:</Typography>
+				<RadioGroup row name="spellResistance" defaultValue="either">
+					{spellResistanceList.map((resistance) => (
+						<FormControlLabel
+							key={resistance.value}
+							value={resistance.value}
+							label={resistance.display}
+							inputRef={props.inputRef}
+							control={<Radio />}
+						/>
+					))}
+				</RadioGroup>
+				<Typography variant="h4">Saves:</Typography>
+				<Grid container className={classes.root}>
+					{savesList.map((save) => (
+						<GridCheckbox
+							key={save.value}
+							name={save.value}
+							label={save.display}
+							inputRef={props.inputRef}
+						/>
+					))}
+				</Grid>
+			</Collapse>
+		</Fragment>
 	);
 }
