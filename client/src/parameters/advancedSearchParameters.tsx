@@ -19,12 +19,12 @@ const useStyles = makeStyles({
 	},
 });
 
-export interface AdvancedParametersProps {
+export interface AdvancedSearchParametersProps {
 	inputRef: (instance: HTMLInputElement | null) => void;
 }
 
-export function AdvancedParameters(
-	props: AdvancedParametersProps
+export function AdvancedSearchParameters(
+	props: AdvancedSearchParametersProps
 ): ReactElement {
 	const [isOpen, setIsOpen] = useState(false);
 

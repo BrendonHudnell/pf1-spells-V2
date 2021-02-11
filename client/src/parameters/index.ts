@@ -1,3 +1,3 @@
-export * from './advancedParameters';
-export * from './parameters';
+export * from './advancedSearchParameters';
+export * from './searchParameters';
 export * from './types';

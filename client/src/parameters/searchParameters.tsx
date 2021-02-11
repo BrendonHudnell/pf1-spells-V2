@@ -7,7 +7,7 @@ import {
 	Typography,
 } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
-import { AdvancedParameters } from './advancedParameters';
+import { AdvancedSearchParameters } from './advancedSearchParameters';
 import { GridCheckbox } from '../gridCheckbox';
 import { TableData } from '../table';
 import { classList, Parameters, spellLevelList } from './types';
@@ -145,7 +145,7 @@ export function SearchParameters(props: SearchParametersProps): ReactElement {
 					);
 				})}
 			</Grid>
-			<AdvancedParameters inputRef={register} />
+			<AdvancedSearchParameters inputRef={register} />
 		</form>
 	);
 }
