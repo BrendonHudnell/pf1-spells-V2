@@ -1,4 +1,9 @@
-export const classList = [
+export interface Class {
+	value: keyof Classes;
+	display: string;
+}
+
+export const classList: Class[] = [
 	{ value: 'alchemist', display: 'Alchemist' },
 	{ value: 'antipaladin', display: 'Antipaladin' },
 	{ value: 'arcanist', display: 'Arcanist' },
@@ -26,3 +31,32 @@ export const classList = [
 	{ value: 'wizard', display: 'Wizard' },
 	{ value: 'summoner_unchained', display: 'Summoner (Unchained)' },
 ];
+
+export interface Classes {
+	alchemist: boolean;
+	antipaladin: boolean;
+	arcanist: boolean;
+	bard: boolean;
+	bloodrager: boolean;
+	cleric: boolean;
+	druid: boolean;
+	hunter: boolean;
+	inquisitor: boolean;
+	investigator: boolean;
+	magus: boolean;
+	medium: boolean;
+	mesmerist: boolean;
+	occultist: boolean;
+	oracle: boolean;
+	paladin: boolean;
+	psychic: boolean;
+	ranger: boolean;
+	shaman: boolean;
+	skald: boolean;
+	sorcerer: boolean;
+	spiritualist: boolean;
+	summoner: boolean;
+	summoner_unchained: boolean;
+	witch: boolean;
+	wizard: boolean;
+}

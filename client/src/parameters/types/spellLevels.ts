@@ -1,4 +1,9 @@
-export const spellLevelList = [
+export interface SpellLevel {
+	value: keyof SpellLevels;
+	display: string;
+}
+
+export const spellLevelList: SpellLevel[] = [
 	{ value: '0th', display: '0th' },
 	{ value: '1st', display: '1st' },
 	{ value: '2nd', display: '2nd' },
@@ -10,3 +15,16 @@ export const spellLevelList = [
 	{ value: '8th', display: '8th' },
 	{ value: '9th', display: '9th' },
 ];
+
+export interface SpellLevels {
+	'0th': boolean;
+	'1st': boolean;
+	'2nd': boolean;
+	'3rd': boolean;
+	'4th': boolean;
+	'5th': boolean;
+	'6th': boolean;
+	'7th': boolean;
+	'8th': boolean;
+	'9th': boolean;
+}

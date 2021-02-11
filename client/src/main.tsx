@@ -7,9 +7,10 @@ import {
 	Tooltip,
 	makeStyles,
 	Link,
+	Paper,
 } from '@material-ui/core';
-import { CollapsibleTable } from './table';
-import { Parameters } from './parameters';
+import { CollapsibleTable, TableData } from './table';
+import { SearchParameters } from './parameters';
 
 const useStyles = makeStyles({
 	root: {
@@ -18,6 +19,9 @@ const useStyles = makeStyles({
 	footer: {
 		top: 'auto',
 		bottom: 0,
+	},
+	paper: {
+		paddingBottom: 50,
 	},
 	title: {
 		flexGrow: 1,
@@ -32,7 +36,7 @@ export interface MainProps {
 export function Main(props: MainProps): ReactElement {
 	const { darkMode, changeTheme } = props;
 
-	const [tableData, setTableData] = useState([] as Record<string, any>[]);
+	const [tableData, setTableData] = useState<TableData[]>([]);
 
 	const classes = useStyles();
 
@@ -46,14 +50,16 @@ export function Main(props: MainProps): ReactElement {
 					<Tooltip title="Toggle Theme">
 						<Switch
 							color="default"
-							defaultChecked={!darkMode}
+							checked={!darkMode}
 							onChange={() => changeTheme(!darkMode)}
 						/>
 					</Tooltip>
 				</Toolbar>
 			</AppBar>
-			<Parameters onUpdate={setTableData} />
-			<CollapsibleTable rowData={tableData} />
+			<Paper className={classes.paper}>
+				<SearchParameters onUpdate={setTableData} />
+				<CollapsibleTable rowData={tableData} />
+			</Paper>
 			<AppBar className={classes.footer} position="fixed">
 				<Typography>
 					Database sourced from&nbsp;

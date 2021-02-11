@@ -9,10 +9,9 @@ import {
 	RadioGroup,
 	Typography,
 } from '@material-ui/core';
-import PlusIcon from '@material-ui/icons/Add';
-import MinusIcon from '@material-ui/icons/Remove';
-import { GridCheckbox } from './gridCheckbox';
-import { savesList, spellResistanceList } from './parameterTypes';
+import { GridCheckbox } from '../gridCheckbox';
+import { MinusIcon, PlusIcon } from '../icons';
+import { savesList, spellResistanceList } from './types';
 
 const useStyles = makeStyles({
 	root: {
@@ -57,7 +56,7 @@ export function AdvancedParameters(
 					{savesList.map((save) => (
 						<GridCheckbox
 							key={save.value}
-							name={save.value}
+							name={`saves.${save.value}`}
 							label={save.display}
 							inputRef={props.inputRef}
 						/>
