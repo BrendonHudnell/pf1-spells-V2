@@ -7,6 +7,7 @@ import {
 	Typography,
 } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
+import ky from 'ky';
 import { AdvancedSearchParameters } from './advancedSearchParameters';
 import { GridCheckbox } from '../gridCheckbox';
 import { TableData } from '../table';
@@ -28,44 +29,42 @@ export function SearchParameters(props: SearchParametersProps): ReactElement {
 	const { register, handleSubmit } = useForm();
 
 	function onSubmit(parameters: Parameters) {
-		// if there are no parameters, dont send request
-		if (isParametersEmpty(parameters)) {
-			return;
-		}
-
-		const queryBase = '/api/spellsearch?';
-		let queryParams = '';
+		const queryBase = '/api/spellsearch';
+		const searchParams: { [key: string]: string | number | boolean } = {};
 
 		// searchString
-		queryParams += `searchString=${parameters.searchString}`;
+		if (parameters.searchString.length > 0) {
+			searchParams['searchString'] = parameters.searchString;
+		}
 		// classes
 		Object.entries(parameters.classes).forEach((entry) => {
 			if (entry[1]) {
-				queryParams += `&${entry[0]}=${entry[1]}`;
+				searchParams[entry[0]] = entry[1];
 			}
 		});
 		// spellLevels
 		Object.entries(parameters.spellLevels).forEach((entry) => {
 			if (entry[1]) {
-				queryParams += `&${entry[0]}=${entry[1]}`;
+				searchParams[entry[0]] = entry[1];
 			}
 		});
 		// spellResistance
 		if (parameters.spellResistance !== 'either') {
-			queryParams += `spellResistance=${parameters.spellResistance}`;
+			searchParams['spellResistance'] = parameters.spellResistance;
 		}
 		// saves
 		Object.entries(parameters.saves).forEach((entry) => {
 			if (entry[1]) {
-				queryParams += `&${entry[0]}=${entry[1]}`;
+				searchParams[entry[0]] = entry[1];
 			}
 		});
 
-		const queryString = queryBase + queryParams;
+		// if there are no parameters, dont send request
+		if (Object.keys(searchParams).length === 0) {
+			return;
+		}
 
-		console.log(queryString);
-
-		fetch(queryString)
+		ky.get(queryBase, { searchParams })
 			.then((res) => res.json())
 			.then(
 				(result) => {
@@ -75,39 +74,6 @@ export function SearchParameters(props: SearchParametersProps): ReactElement {
 					console.log(error);
 				}
 			);
-	}
-
-	function isParametersEmpty(parameters: Parameters) {
-		// searchString
-		if (parameters.searchString.length > 0) {
-			return false;
-		}
-		// classes
-		const classes: boolean[] = Object.values(parameters.classes);
-		for (const value of classes) {
-			if (value === true) {
-				return false;
-			}
-		}
-		// spellLevels
-		const levels: boolean[] = Object.values(parameters.spellLevels);
-		for (const value of levels) {
-			if (value === true) {
-				return false;
-			}
-		}
-		// spellResistance
-		if (parameters.spellResistance !== 'either') {
-			return false;
-		}
-		// saves
-		const saves: boolean[] = Object.values(parameters.saves);
-		for (const value of saves) {
-			if (value === true) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	return (
