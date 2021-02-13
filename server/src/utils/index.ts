@@ -1,1 +1,1 @@
-export * from './isObjectEmpty';
+export * from './isProcessObjectEmpty';
