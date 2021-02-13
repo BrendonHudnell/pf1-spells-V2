@@ -36,7 +36,9 @@ export interface MainProps {
 export function Main(props: MainProps): ReactElement {
 	const { darkMode, changeTheme } = props;
 
-	const [tableData, setTableData] = useState<TableData[]>([]);
+	const [tableData, setTableData] = useState<TableData[] | undefined>(
+		undefined
+	);
 
 	const classes = useStyles();
 
@@ -58,7 +60,7 @@ export function Main(props: MainProps): ReactElement {
 			</AppBar>
 			<Paper className={classes.paper}>
 				<SearchParameters onUpdate={setTableData} />
-				<CollapsibleTable rowData={tableData} />
+				{tableData ? <CollapsibleTable rowData={tableData} /> : null}
 			</Paper>
 			<AppBar className={classes.footer} position="fixed">
 				<Typography>

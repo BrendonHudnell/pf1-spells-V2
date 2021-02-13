@@ -1,4 +1,10 @@
-import React, { Fragment, ReactElement, useState } from 'react';
+import React, {
+	ChangeEvent,
+	Fragment,
+	MouseEvent,
+	ReactElement,
+	useState,
+} from 'react';
 import parse from 'html-react-parser';
 import {
 	Box,
@@ -9,16 +15,16 @@ import {
 	TableBody,
 	TableCell,
 	TableContainer,
+	TableFooter,
 	TableHead,
+	TablePagination,
 	TableRow,
 	TableSortLabel,
 	Typography,
 } from '@material-ui/core';
 import { CollapseIcon, ExpandIcon } from '../icons';
 import { TableData } from './types';
-
-// TODO:
-// - add pagination
+import { TablePaginationActions } from './tablePaginationActions';
 
 export interface HeadCell {
 	id: keyof TableData;
@@ -42,46 +48,61 @@ export interface TableProps {
 export function CollapsibleTable(props: TableProps) {
 	const { rowData } = props;
 
-	const [order, setOrder] = React.useState<Order>('asc');
-	const [orderBy, setOrderBy] = React.useState<keyof TableData>('spell_name');
+	const [order, setOrder] = useState<Order>('asc');
+	const [orderBy, setOrderBy] = useState<keyof TableData>('spell_name');
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(25);
 
 	function handleRequestSort(property: keyof TableData) {
 		const isAsc = orderBy === property && order === 'asc';
 		setOrder(isAsc ? 'desc' : 'asc');
 		setOrderBy(property);
-		sortData();
 	}
 
-	function sortData() {
-		rowData.sort((a, b) => {
+	function sortData(data: TableData[]): TableData[] {
+		data.sort((a, b) => {
 			// nulls sort after anything else
 			if (a[orderBy] === null) {
 				return 1;
-			} else if (b[orderBy] === null) {
+			}
+			if (b[orderBy] === null) {
 				return -1;
 			}
-			// equal items sort equally
-			else if (a[orderBy] === b[orderBy]) {
-				return 0;
-			}
-
 			// if we're ascending, lowest sorts first
-			else if (order === 'asc') {
+			if (order === 'asc') {
 				return a[orderBy] < b[orderBy] ? -1 : 1;
 			}
 			// otherwise, if descending, highest sorts first
-			else {
+			if (order === 'desc') {
 				return a[orderBy] < b[orderBy] ? 1 : -1;
 			}
+			return 0;
 		});
+		return data;
 	}
+
+	const emptyRows =
+		rowsPerPage - Math.min(rowsPerPage, rowData.length - page * rowsPerPage);
+
+	const handleChangePage = (
+		event: MouseEvent<HTMLButtonElement> | null,
+		newPage: number
+	) => {
+		setPage(newPage);
+	};
+
+	const handleChangeRowsPerPage = (
+		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => {
+		setRowsPerPage(parseInt(event.target.value, 10));
+		setPage(0);
+	};
 
 	return (
 		<TableContainer component={Paper}>
-			<Typography
-				variant="h4"
-				gutterBottom
-			>{`${rowData.length} results found.`}</Typography>
+			<Typography variant="h4" gutterBottom>
+				{`${rowData.length} results found.`}
+			</Typography>
 			<Table stickyHeader>
 				<TableHead>
 					<TableRow>
@@ -103,10 +124,44 @@ export function CollapsibleTable(props: TableProps) {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{rowData.map((row) => (
+					{(rowsPerPage > 0
+						? sortData(rowData).slice(
+								page * rowsPerPage,
+								page * rowsPerPage + rowsPerPage
+						  )
+						: sortData(rowData)
+					).map((row) => (
 						<Row key={row.spell_name} row={row} />
 					))}
+					{emptyRows > 0 && (
+						<TableRow style={{ height: 53 * emptyRows }}>
+							<TableCell colSpan={6} />
+						</TableRow>
+					)}
 				</TableBody>
+				<TableFooter>
+					<TableRow>
+						<TablePagination
+							rowsPerPageOptions={[
+								10,
+								25,
+								50,
+								100,
+								{ label: 'All', value: -1 },
+							]}
+							colSpan={6}
+							count={rowData.length}
+							rowsPerPage={rowsPerPage}
+							page={page}
+							SelectProps={{
+								native: true,
+							}}
+							onChangePage={handleChangePage}
+							onChangeRowsPerPage={handleChangeRowsPerPage}
+							ActionsComponent={TablePaginationActions}
+						/>
+					</TableRow>
+				</TableFooter>
 			</Table>
 		</TableContainer>
 	);
