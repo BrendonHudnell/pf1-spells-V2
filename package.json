@@ -12,21 +12,24 @@
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
+    "ajv": "^7.1.0",
+    "ajv-formats": "^1.5.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "html-react-parser": "^1.2.4",
     "ky": "^0.26.0",
-    "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-hook-form": "^6.15.1",
-    "tslib": "^2.1.0"
+    "reflect-metadata": "^0.1.13",
+    "tslib": "^2.1.0",
+    "typeorm": "^0.2.31"
   },
   "devDependencies": {
     "@types/cors": "^2.8.9",
     "@types/express": "^4.17.11",
-    "@types/mysql": "^2.15.17",
     "@types/node": "^14.14.22",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
