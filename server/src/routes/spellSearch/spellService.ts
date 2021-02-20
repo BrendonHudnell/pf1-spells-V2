@@ -11,7 +11,7 @@ export interface ProcessObject {
 	spellLevels: number[];
 }
 
-export function processQuery(queryParams: qs.ParsedQs): ProcessObject {
+export function processRequest(queryParams: qs.ParsedQs): ProcessObject {
 	const processObject: ProcessObject = {
 		searchString: '',
 		spellResistance: '',
@@ -65,7 +65,7 @@ export function processQuery(queryParams: qs.ParsedQs): ProcessObject {
 	return processObject;
 }
 
-export function createSQLParameters(
+export function buildQuery(
 	queryObject: ProcessObject,
 	spellRepository: Repository<SpellEntity>
 ): SelectQueryBuilder<SpellEntity> {
