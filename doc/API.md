@@ -130,9 +130,9 @@
 
 * **Error Response:**
 
-  For parameters with illegal values:
+  * **For parameters with illegal values:**
 
-  * **Code:** 400 <br />
+    **Code:** 400 <br />
     **Content:**
     ```
     {
@@ -155,9 +155,9 @@
     }
     ```
 
-  For illegal parameters:
+  * **For illegal parameters:**
 
-  * **Code:** 400 <br />
+    **Code:** 400 <br />
     **Content:**
     ```
     {
