@@ -1,13 +1,13 @@
-import React, { MouseEvent } from 'react';
+import React, { MouseEvent, ReactElement } from 'react';
 import { createStyles, IconButton } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
+import { Theme } from '@material-ui/core';
 import {
 	FirstPageIcon,
 	LastPageIcon,
 	LeftArrowIcon,
 	RightArrowIcon,
-} from '../icons';
-import { makeStyles } from '@material-ui/core';
-import { Theme } from '@material-ui/core';
+} from '../../components/icons';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -18,32 +18,38 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-export interface TablePaginationActionsProps {
+export interface SpellTablePaginationActionsProps {
 	count: number;
 	page: number;
 	rowsPerPage: number;
 	onChangePage: (event: MouseEvent<HTMLButtonElement>, newPage: number) => void;
 }
 
-export function TablePaginationActions(props: TablePaginationActionsProps) {
+export function SpellTablePaginationActions(
+	props: SpellTablePaginationActionsProps
+): ReactElement {
 	const classes = useStyles();
 	const { count, page, rowsPerPage, onChangePage } = props;
 
-	const handleFirstPageButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
+	function handleFirstPageButtonClick(
+		event: MouseEvent<HTMLButtonElement>
+	): void {
 		onChangePage(event, 0);
-	};
+	}
 
-	const handleBackButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
+	function handleBackButtonClick(event: MouseEvent<HTMLButtonElement>): void {
 		onChangePage(event, page - 1);
-	};
+	}
 
-	const handleNextButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
+	function handleNextButtonClick(event: MouseEvent<HTMLButtonElement>): void {
 		onChangePage(event, page + 1);
-	};
+	}
 
-	const handleLastPageButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
+	function handleLastPageButtonClick(
+		event: MouseEvent<HTMLButtonElement>
+	): void {
 		onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-	};
+	}
 
 	return (
 		<div className={classes.root}>
