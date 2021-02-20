@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { getManager } from 'typeorm';
 import { SpellEntity } from './spellEntity';
-import { createSQLParameters, processQuery } from './spellService';
+import { buildQuery, processRequest } from './spellService';
 import { spellSearchValidator } from './spellValidator';
 
 export function createSpellSearchRouter(): Router {
@@ -13,13 +13,13 @@ export function createSpellSearchRouter(): Router {
 }
 
 export async function getSpells(req: Request, res: Response): Promise<void> {
-	const queryObject = processQuery(req.query);
+	const queryObject = processRequest(req.query);
 
 	const spellRepository = getManager().getRepository(SpellEntity);
 
-	const query = createSQLParameters(queryObject, spellRepository);
+	const query = buildQuery(queryObject, spellRepository);
 
 	const spells = await query.getMany();
 
-	res.json(spells);
+	res.status(200).json(spells);
 }
