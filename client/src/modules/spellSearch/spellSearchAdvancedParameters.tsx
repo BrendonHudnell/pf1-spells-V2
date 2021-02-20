@@ -9,8 +9,8 @@ import {
 	RadioGroup,
 	Typography,
 } from '@material-ui/core';
-import { GridCheckbox } from '../gridCheckbox';
-import { MinusIcon, PlusIcon } from '../icons';
+import { GridCheckbox } from '../../components/gridCheckbox';
+import { MinusIcon, PlusIcon } from '../../components/icons';
 import { savesList, spellResistanceList } from './types';
 
 const useStyles = makeStyles({
@@ -19,12 +19,12 @@ const useStyles = makeStyles({
 	},
 });
 
-export interface AdvancedSearchParametersProps {
+export interface SpellSearchAdvancedParametersProps {
 	inputRef: (instance: HTMLInputElement | null) => void;
 }
 
-export function AdvancedSearchParameters(
-	props: AdvancedSearchParametersProps
+export function SpellSearchAdvancedParameters(
+	props: SpellSearchAdvancedParametersProps
 ): ReactElement {
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -33,6 +33,7 @@ export function AdvancedSearchParameters(
 	return (
 		<Fragment>
 			<Button
+				variant="contained"
 				onClick={() => setIsOpen(!isOpen)}
 				startIcon={isOpen ? <MinusIcon /> : <PlusIcon />}
 			>

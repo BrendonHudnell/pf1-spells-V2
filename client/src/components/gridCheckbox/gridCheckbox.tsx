@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Checkbox, FormControlLabel, Grid } from '@material-ui/core';
 
 export interface GridCheckboxProps {
@@ -7,7 +7,7 @@ export interface GridCheckboxProps {
 	inputRef: (instance: HTMLInputElement | null) => void;
 }
 
-export function GridCheckbox(props: GridCheckboxProps) {
+export function GridCheckbox(props: GridCheckboxProps): ReactElement {
 	return (
 		<Grid item>
 			<FormControlLabel

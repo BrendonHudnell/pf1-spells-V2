@@ -1,17 +1,16 @@
-import React, { useMemo, useState } from 'react';
+import React, { ReactElement, useContext, useMemo } from 'react';
 import { createMuiTheme, ThemeProvider, CssBaseline } from '@material-ui/core';
-import { Main } from './main';
+import { ShellLayout } from './shellLayout';
+import { AppContext } from '../../components/store';
 
-export function App() {
-	const [darkMode, setDarkMode] = useState(
-		localStorage.getItem('theme') === 'dark'
-	);
+export function ShellView(): ReactElement {
+	const { state } = useContext(AppContext);
 
 	const theme = useMemo(
 		() =>
 			createMuiTheme({
 				palette: {
-					type: darkMode ? 'dark' : 'light',
+					type: state.darkMode ? 'dark' : 'light',
 				},
 				typography: {
 					button: {
@@ -35,22 +34,13 @@ export function App() {
 					},
 				},
 			}),
-		[darkMode]
+		[state.darkMode]
 	);
-
-	function changeTheme(darkMode: boolean) {
-		if (darkMode) {
-			localStorage.setItem('theme', 'dark');
-		} else {
-			localStorage.removeItem('theme');
-		}
-		setDarkMode(darkMode);
-	}
 
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
-			<Main darkMode={darkMode} changeTheme={changeTheme} />
+			<ShellLayout />
 		</ThemeProvider>
 	);
 }
