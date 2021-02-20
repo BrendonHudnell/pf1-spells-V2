@@ -112,7 +112,7 @@
 
 * **Success Response:**
   
-  * **Code:** TODO <br />
+  * **Code:** 200 <br />
     **Content:** 
     ```
     [
@@ -127,16 +127,55 @@
       ...
     ]
     ```
- 
+
 * **Error Response:**
 
-  * **Code:** TODO <br />
-    **Content:** `TODO`
+  * **For parameters with illegal values:**
 
-  OR
+    **Code:** 400 <br />
+    **Content:**
+    ```
+    {
+      ok: false,
+      status: 400,
+      error: [
+        {
+          keyword: "enum",
+          dataPath: "/query/<parameterName>",
+          schemaPath: "#/properties/query/properties/<parameterName>/enum",
+          params: {
+            allowedValues: [
+              "true",
+              "false"
+            ]
+          },
+          message: "should be equal to one of the allowed values"
+        }
+      ]
+    }
+    ```
 
-  * **Code:** TODO <br />
-    **Content:** `TODO`
+  * **For illegal parameters:**
+
+    **Code:** 400 <br />
+    **Content:**
+    ```
+    {
+      ok: false,
+      status: 400,
+      error: [
+        {
+          keyword: "additionalProperties",
+          dataPath: "/query",
+          schemaPath: "#/properties/query/additionalProperties",
+          params: {
+            additionalProperty: "<parameterName>"
+          },
+          message: "should NOT have additional properties"
+        }
+      ]
+    }
+    ```
 
 * **Sample Call:**
 
