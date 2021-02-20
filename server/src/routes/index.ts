@@ -6,11 +6,11 @@ const router = Router();
 router.use('/spellsearch', createSpellSearchRouter());
 
 router.get('/', (req: Request, res: Response): void => {
-	res.send('You have reached the API');
+	res.status(200).send('You have reached the API');
 });
 
 router.get('*', (req: Request, res: Response): void => {
-	res.send('That endpoint does not exist :(');
+	res.sendStatus(404);
 });
 
 export default router;

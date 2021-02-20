@@ -21,5 +21,5 @@ export async function getSpells(req: Request, res: Response): Promise<void> {
 
 	const spells = await query.getMany();
 
-	res.json(spells);
+	res.status(200).json(spells);
 }
