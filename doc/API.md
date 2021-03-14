@@ -140,16 +140,13 @@
       status: 400,
       error: [
         {
-          keyword: "enum",
+          keyword: "type",
           dataPath: "/query/<parameterName>",
-          schemaPath: "#/properties/query/properties/<parameterName>/enum",
+          schemaPath: "#/properties/query/properties/<parameterName>/type",
           params: {
-            allowedValues: [
-              "true",
-              "false"
-            ]
+            type: "boolean"
           },
-          message: "should be equal to one of the allowed values"
+          message: "should be boolean"
         }
       ]
     }
