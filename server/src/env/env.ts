@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+/* istanbul ignore next */
 export const env = {
 	dbHost: process.env.DB_HOST ?? '',
 	dbUser: process.env.DB_USER ?? '',
