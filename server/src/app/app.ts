@@ -22,10 +22,13 @@ export function createApp(): Express {
 		res.sendStatus(404);
 	});
 
+	/* istanbul ignore next */
 	app.get('*', (req: Request, res: Response): void => {
-		res.sendFile(
-			path.join(__dirname, '..', '..', '..', 'client', 'build', 'index.html')
-		);
+		res
+			.status(200)
+			.sendFile(
+				path.join(__dirname, '..', '..', '..', 'client', 'build', 'index.html')
+			);
 	});
 
 	return app;
