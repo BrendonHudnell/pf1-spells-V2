@@ -1,4 +1,4 @@
-import { ProcessObject } from '../routes/spellSearch';
+import { ProcessObject } from '../modules/spellSearch';
 
 export function isProcessObjectEmpty(myObject: ProcessObject): boolean {
 	const values = Object.values(myObject);

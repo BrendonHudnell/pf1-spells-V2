@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import path from 'path';
-import { createSpellSearchRouter } from '../routes/spellSearch';
+import { createSpellSearchRouter } from '../modules/spellSearch';
 
 export function createApp(): Express {
 	const app = express();

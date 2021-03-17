@@ -1,7 +1,7 @@
 import { createConnection, getConnection } from 'typeorm';
 import 'reflect-metadata';
 import { env } from '../env';
-import { SpellEntity } from '../routes/spellSearch';
+import { SpellEntity } from '../modules/spellSearch';
 
 export const connection = {
 	async create() {

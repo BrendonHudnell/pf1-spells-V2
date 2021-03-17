@@ -40,11 +40,14 @@ export function processRequest(queryParams: qs.ParsedQs): ProcessObject {
 					newKey = 'wiz';
 				}
 				// investigator is a superset of alchemist so add bard to the query
-				if (key === 'investigator') {
+				if (
+					key === 'investigator' &&
+					!processObject.classes.includes('alchemist')
+				) {
 					processObject.classes.push('alchemist');
 				}
 				// skald is a superset of bard so add bard to the query
-				if (key === 'skald') {
+				if (key === 'skald' && !processObject.classes.includes('bard')) {
 					processObject.classes.push('bard');
 				} else if (key === 'wizard') {
 					newKey = 'wiz'; // rename to match database names
@@ -53,7 +56,11 @@ export function processRequest(queryParams: qs.ParsedQs): ProcessObject {
 				} else if (key === 'medium') {
 					newKey = 'spell_medium'; // rename to match database names
 				}
-				processObject.classes.push(newKey);
+
+				// only add if it hasnt been added above
+				if (!processObject.classes.includes(newKey)) {
+					processObject.classes.push(newKey);
+				}
 			} else if (SaveTypes.includes(key)) {
 				processObject.saves.push(key);
 			} else if (SpellLevelTypes.includes(key)) {

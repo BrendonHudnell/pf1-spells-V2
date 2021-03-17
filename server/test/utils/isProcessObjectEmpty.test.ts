@@ -1,4 +1,4 @@
-import { ProcessObject } from '../../src/routes/spellSearch';
+import { ProcessObject } from '../../src/modules/spellSearch';
 import { isProcessObjectEmpty } from '../../src/utils';
 
 describe('isProcessObjectEmpty', () => {
