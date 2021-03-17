@@ -8,11 +8,13 @@ export function createApp(): Express {
 
 	app.use(cors());
 
-	app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')));
+	app.use(
+		express.static(path.join(__dirname, '..', '..', '..', 'client', 'build'))
+	);
 
-	app.use('api/spellsearch', createSpellSearchRouter());
+	app.use('/api/spellsearch', createSpellSearchRouter());
 
-	app.get('api/', (req: Request, res: Response): void => {
+	app.get('/api', (req: Request, res: Response): void => {
 		res.status(200).send('You have reached the API');
 	});
 
@@ -22,7 +24,7 @@ export function createApp(): Express {
 
 	app.get('*', (req: Request, res: Response): void => {
 		res.sendFile(
-			path.join(__dirname, '..', '..', 'client', 'build', 'index.html')
+			path.join(__dirname, '..', '..', '..', 'client', 'build', 'index.html')
 		);
 	});
 
