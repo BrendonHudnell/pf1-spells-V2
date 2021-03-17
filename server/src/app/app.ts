@@ -18,7 +18,7 @@ export function createApp(): Express {
 		res.status(200).send('You have reached the API');
 	});
 
-	app.get('api/*', (req: Request, res: Response): void => {
+	app.get('/api/*', (req: Request, res: Response): void => {
 		res.sendStatus(404);
 	});
 
