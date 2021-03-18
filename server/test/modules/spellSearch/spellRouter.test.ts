@@ -1,29 +1,30 @@
 import request from 'supertest';
 import { Express } from 'express';
-import { connection } from '../../../src/utils';
 import { createApp } from '../../../src/app';
+import {
+	processRequest,
+	QueryObject,
+	spellService,
+} from '../../../src/modules/spellSearch';
 
 let app: Express;
 
-beforeAll(async () => {
-	await connection.create();
-	app = createApp();
-});
-
-afterAll(async () => {
-	await connection.close();
-});
-
 describe('spellRouter', () => {
+	beforeAll(async () => {
+		app = createApp();
+	});
+
 	describe('GET /', () => {
 		it('should return 200 and return all entries when request is empty', (done) => {
+			spellService.getSpells = jest.fn().mockResolvedValue([]);
+
 			request(app)
 				.get('/api/spellSearch')
 				.expect('Content-Type', /json/)
 				.expect(200)
 				.end((err, res) => {
 					if (err) return done(err);
-					expect(res.body.length).toEqual(2905);
+					expect(res.body.length).toEqual(0);
 					done();
 				});
 		});
@@ -83,5 +84,171 @@ describe('spellRouter', () => {
 					done();
 				});
 		});
+	});
+});
+
+describe('processRequest', () => {
+	it('should convert the searchString param', () => {
+		const params = {
+			searchString: '     searchString    ',
+		};
+		const expectedResult: QueryObject = {
+			searchString: 'searchString',
+			spellResistance: '',
+			classes: [],
+			saves: [],
+			spellLevels: [],
+		};
+
+		const result = processRequest(params);
+
+		expect(result).toMatchObject(expectedResult);
+	});
+
+	it('should convert the spellResistance param true to yes', () => {
+		const params = {
+			spellResistance: 'true',
+		};
+		const expectedResult: QueryObject = {
+			searchString: '',
+			spellResistance: 'yes',
+			classes: [],
+			saves: [],
+			spellLevels: [],
+		};
+
+		const result = processRequest(params);
+
+		expect(result).toMatchObject(expectedResult);
+	});
+
+	it('should convert the spellResistance param false to no', () => {
+		const params = {
+			spellResistance: 'false',
+		};
+		const expectedResult: QueryObject = {
+			searchString: '',
+			spellResistance: 'no',
+			classes: [],
+			saves: [],
+			spellLevels: [],
+		};
+
+		const result = processRequest(params);
+
+		expect(result).toMatchObject(expectedResult);
+	});
+
+	it('should convert the save params', () => {
+		const params = {
+			fortitude: 'true',
+			reflex: 'true',
+			will: 'false',
+			none: 'true',
+		};
+		const expectedResult: QueryObject = {
+			searchString: '',
+			spellResistance: '',
+			classes: [],
+			saves: ['fortitude', 'reflex', 'none'],
+			spellLevels: [],
+		};
+
+		const result = processRequest(params);
+
+		expect(result).toMatchObject(expectedResult);
+	});
+
+	it('should convert the spellLevel params', () => {
+		const params = {
+			'0th': 'true',
+			'1st': 'true',
+			'2nd': 'true',
+			'3rd': 'true',
+			'4th': 'true',
+			'5th': 'true',
+			'6th': 'true',
+			'7th': 'true',
+			'8th': 'false',
+			'9th': 'true',
+		};
+		const expectedResult: QueryObject = {
+			searchString: '',
+			spellResistance: '',
+			classes: [],
+			saves: [],
+			spellLevels: [0, 1, 2, 3, 4, 5, 6, 7, 9],
+		};
+
+		const result = processRequest(params);
+
+		expect(result).toMatchObject(expectedResult);
+	});
+
+	it('should convert the class params', () => {
+		const params = {
+			skald: 'true',
+			investigator: 'true',
+			alchemist: 'true',
+			antipaladin: 'true',
+			arcanist: 'true',
+			bard: 'true',
+			bloodrager: 'true',
+			cleric: 'true',
+			druid: 'true',
+			hunter: 'true',
+			inquisitor: 'true',
+			magus: 'true',
+			medium: 'true',
+			mesmerist: 'true',
+			occultist: 'true',
+			oracle: 'true',
+			paladin: 'true',
+			psychic: 'true',
+			ranger: 'true',
+			shaman: 'true',
+			sorcerer: 'true',
+			spiritualist: 'true',
+			summoner: 'false',
+			summoner_unchained: 'true',
+			witch: 'true',
+			wizard: 'true',
+		};
+		const expectedResult: QueryObject = {
+			searchString: '',
+			spellResistance: '',
+			classes: [
+				'bard',
+				'skald',
+				'alchemist',
+				'investigator',
+				'antipaladin',
+				'wiz',
+				'bloodrager',
+				'cleric',
+				'druid',
+				'hunter',
+				'inquisitor',
+				'magus',
+				'spell_medium',
+				'mesmerist',
+				'occultist',
+				'oracle',
+				'paladin',
+				'psychic',
+				'ranger',
+				'shaman',
+				'sor',
+				'spiritualist',
+				'summoner_unchained',
+				'witch',
+			],
+			saves: [],
+			spellLevels: [],
+		};
+
+		const result = processRequest(params);
+
+		expect(result).toMatchObject(expectedResult);
 	});
 });
