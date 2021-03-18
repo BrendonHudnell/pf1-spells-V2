@@ -72,9 +72,9 @@
     "dev:server": "ts-node-dev --respawn --transpile-only server/src/server.ts",
     "lint": "eslint . --ext .js,.ts,.tsx --quiet --fix",
     "test": "yarn test:server",
-    "test:server": "jest --runInBand",
+    "test:server": "jest",
     "cover": "yarn cover:server",
-    "cover:server": "jest --runInBand --coverage"
+    "cover:server": "jest --coverage"
   },
   "husky": {
     "hooks": {
