@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { ParsedQuery, parseUrl } from 'query-string';
 import { SaveTypes, SpellLevelTypes } from '../../types';
 import { spellService } from './spellService';
 import { spellSearchValidator } from './spellValidator';
@@ -20,14 +21,18 @@ export function createSpellSearchRouter(): Router {
 }
 
 export async function getSpells(req: Request, res: Response): Promise<void> {
-	const queryObject = processRequest(req.query);
+	const queryParams = parseUrl(req.url, { parseBooleans: true }).query;
+
+	const queryObject = processRequest(queryParams);
 
 	const spells = await spellService.getSpells(queryObject);
 
 	res.status(200).json(spells);
 }
 
-export function processRequest(queryParams: qs.ParsedQs): QueryObject {
+export function processRequest(
+	queryParams: ParsedQuery<string | boolean>
+): QueryObject {
 	const queryObject: QueryObject = {
 		searchString: '',
 		spellResistance: '',
@@ -37,17 +42,17 @@ export function processRequest(queryParams: qs.ParsedQs): QueryObject {
 	};
 
 	Object.entries(queryParams).forEach((entry) => {
-		const [key, tempValue] = entry;
-		const value = tempValue as string;
-		if (key === 'searchString' && value.length > 0) {
-			queryObject.searchString = value.trim();
-		} else if (key === 'spellResistance' && value.length > 0) {
-			if (value === 'true') {
+		const [key, value] = entry;
+
+		if (key === 'searchString' && (value as string).length > 0) {
+			queryObject.searchString = (value as string).trim();
+		} else if (key === 'spellResistance') {
+			if (value) {
 				queryObject.spellResistance = 'yes';
 			} else {
 				queryObject.spellResistance = 'no';
 			}
-		} else if (value === 'true') {
+		} else if (value) {
 			// only accept true values for now
 			if (SpellLevelTypes.includes(key)) {
 				queryObject.spellLevels.push(parseInt(key));
