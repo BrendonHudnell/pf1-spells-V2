@@ -1,4 +1,5 @@
 import request from 'supertest';
+import sinon from 'sinon';
 import { Express } from 'express';
 import { createApp } from '../../../src/app';
 import {
@@ -7,16 +8,16 @@ import {
 	spellService,
 } from '../../../src/modules/spellSearch';
 
-let app: Express;
-
 describe('spellRouter', () => {
-	beforeAll(async () => {
-		app = createApp();
-	});
+	let app: Express;
+	const sandbox = sinon.createSandbox();
+
+	beforeAll(() => (app = createApp()));
+	afterEach(() => sandbox.restore());
 
 	describe('GET /', () => {
 		it('should return 200 and return all entries when request is empty', (done) => {
-			spellService.getSpells = jest.fn().mockResolvedValue([]);
+			sandbox.stub(spellService, 'getSpells').resolves([]);
 
 			request(app)
 				.get('/api/spellSearch')
@@ -107,7 +108,7 @@ describe('processRequest', () => {
 
 	it('should convert the spellResistance param true to yes', () => {
 		const params = {
-			spellResistance: 'true',
+			spellResistance: true,
 		};
 		const expectedResult: QueryObject = {
 			searchString: '',
@@ -124,7 +125,7 @@ describe('processRequest', () => {
 
 	it('should convert the spellResistance param false to no', () => {
 		const params = {
-			spellResistance: 'false',
+			spellResistance: false,
 		};
 		const expectedResult: QueryObject = {
 			searchString: '',
@@ -141,10 +142,10 @@ describe('processRequest', () => {
 
 	it('should convert the save params', () => {
 		const params = {
-			fortitude: 'true',
-			reflex: 'true',
-			will: 'false',
-			none: 'true',
+			fortitude: true,
+			reflex: true,
+			will: false,
+			none: true,
 		};
 		const expectedResult: QueryObject = {
 			searchString: '',
@@ -161,16 +162,16 @@ describe('processRequest', () => {
 
 	it('should convert the spellLevel params', () => {
 		const params = {
-			'0th': 'true',
-			'1st': 'true',
-			'2nd': 'true',
-			'3rd': 'true',
-			'4th': 'true',
-			'5th': 'true',
-			'6th': 'true',
-			'7th': 'true',
-			'8th': 'false',
-			'9th': 'true',
+			'0th': true,
+			'1st': true,
+			'2nd': true,
+			'3rd': true,
+			'4th': true,
+			'5th': true,
+			'6th': true,
+			'7th': true,
+			'8th': false,
+			'9th': true,
 		};
 		const expectedResult: QueryObject = {
 			searchString: '',
@@ -187,32 +188,32 @@ describe('processRequest', () => {
 
 	it('should convert the class params', () => {
 		const params = {
-			skald: 'true',
-			investigator: 'true',
-			alchemist: 'true',
-			antipaladin: 'true',
-			arcanist: 'true',
-			bard: 'true',
-			bloodrager: 'true',
-			cleric: 'true',
-			druid: 'true',
-			hunter: 'true',
-			inquisitor: 'true',
-			magus: 'true',
-			medium: 'true',
-			mesmerist: 'true',
-			occultist: 'true',
-			oracle: 'true',
-			paladin: 'true',
-			psychic: 'true',
-			ranger: 'true',
-			shaman: 'true',
-			sorcerer: 'true',
-			spiritualist: 'true',
-			summoner: 'false',
-			summoner_unchained: 'true',
-			witch: 'true',
-			wizard: 'true',
+			skald: true,
+			investigator: true,
+			alchemist: true,
+			antipaladin: true,
+			arcanist: true,
+			bard: true,
+			bloodrager: true,
+			cleric: true,
+			druid: true,
+			hunter: true,
+			inquisitor: true,
+			magus: true,
+			medium: true,
+			mesmerist: true,
+			occultist: true,
+			oracle: true,
+			paladin: true,
+			psychic: true,
+			ranger: true,
+			shaman: true,
+			sorcerer: true,
+			spiritualist: true,
+			summoner: false,
+			summoner_unchained: true,
+			witch: true,
+			wizard: true,
 		};
 		const expectedResult: QueryObject = {
 			searchString: '',
