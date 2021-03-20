@@ -1,2 +1,2 @@
 export * from './boolBitTransformer';
-export * from './isProcessObjectEmpty';
+export * from './connection';

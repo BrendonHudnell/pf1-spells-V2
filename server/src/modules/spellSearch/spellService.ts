@@ -1,72 +1,30 @@
-import { Repository, SelectQueryBuilder, Brackets } from 'typeorm';
+import {
+	Repository,
+	SelectQueryBuilder,
+	Brackets,
+	getRepository,
+} from 'typeorm';
 import { SpellEntity } from './spellEntity';
-import { ClassTypes, SaveTypes, SpellLevelTypes } from '../../types';
-import { isProcessObjectEmpty } from '../../utils';
+import { QueryObject } from './spellRouter';
 
-export interface ProcessObject {
-	searchString: string;
-	spellResistance: string;
-	classes: string[];
-	saves: string[];
-	spellLevels: number[];
+export const spellService = {
+	getSpells,
+	buildQuery,
+	isQueryObjectEmpty,
+};
+
+async function getSpells(queryObject: QueryObject): Promise<SpellEntity[]> {
+	const spellRepository = getRepository(SpellEntity);
+
+	const query = buildQuery(queryObject, spellRepository);
+
+	const spells = await query.getMany();
+
+	return spells;
 }
 
-export function processRequest(queryParams: qs.ParsedQs): ProcessObject {
-	const processObject: ProcessObject = {
-		searchString: '',
-		spellResistance: '',
-		classes: [],
-		saves: [],
-		spellLevels: [],
-	};
-
-	Object.entries(queryParams).forEach((entry) => {
-		const [key, tempValue] = entry;
-		const value = tempValue as string;
-		if (key === 'searchString' && value.length > 0) {
-			processObject.searchString = value.trim();
-		} else if (key === 'spellResistance' && value.length > 0) {
-			if (value === 'true') {
-				processObject.spellResistance = 'yes';
-			} else if (value === 'false') {
-				processObject.spellResistance = 'no';
-			}
-		} else if (value === 'true') {
-			// only accept true values for now
-			if (ClassTypes.includes(key)) {
-				let newKey = key;
-				// arcanist is treated the same as wizard in the database
-				if (key === 'arcanist') {
-					newKey = 'wiz';
-				}
-				// investigator is a superset of alchemist so add bard to the query
-				if (key === 'investigator') {
-					processObject.classes.push('alchemist');
-				}
-				// skald is a superset of bard so add bard to the query
-				if (key === 'skald') {
-					processObject.classes.push('bard');
-				} else if (key === 'wizard') {
-					newKey = 'wiz'; // rename to match database names
-				} else if (key === 'sorcerer') {
-					newKey = 'sor'; // rename to match database names
-				} else if (key === 'medium') {
-					newKey = 'spell_medium'; // rename to match database names
-				}
-				processObject.classes.push(newKey);
-			} else if (SaveTypes.includes(key)) {
-				processObject.saves.push(key);
-			} else if (SpellLevelTypes.includes(key)) {
-				processObject.spellLevels.push(parseInt(key));
-			}
-		}
-	});
-
-	return processObject;
-}
-
-export function buildQuery(
-	queryObject: ProcessObject,
+function buildQuery(
+	queryObject: QueryObject,
 	spellRepository: Repository<SpellEntity>
 ): SelectQueryBuilder<SpellEntity> {
 	const builder = spellRepository
@@ -81,7 +39,7 @@ export function buildQuery(
 		]);
 
 	// if the queryObject is empty, return
-	if (isProcessObjectEmpty(queryObject)) {
+	if (isQueryObjectEmpty(queryObject)) {
 		return builder;
 	}
 
@@ -187,4 +145,14 @@ export function buildQuery(
 	}
 
 	return builder;
+}
+
+function isQueryObjectEmpty(queryObject: QueryObject): boolean {
+	const values = Object.values(queryObject);
+	for (let i = 0; i < values.length; i++) {
+		if (values[i].length > 0) {
+			return false;
+		}
+	}
+	return true;
 }
